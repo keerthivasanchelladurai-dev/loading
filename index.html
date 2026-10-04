@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Please wait while the application loads.">
+    <title>Loading&hellip;</title>
+
+    <style>
+        /* ── Reset ────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; width: 100%; overflow: hidden; }
+
+        /* ── Body ─────────────────────────────────────────── */
+        body {
+            /* The whole page is transparent as requested */
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        /* ── Outer scene ──────────────────────────────────── */
+        .scene {
+            width: min(90%, 840px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+
+        /* ── "LOADING…" label ─────────────────────────────── */
+        .loading-label {
+            font-size: clamp(0.75rem, 2vw, 1rem);
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            /* Changed color to dark gray so it's visible on transparent/white background */
+            color: #333333;
+            animation: blink 1.6s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0.3; }
+        }
+
+        /* ── Track Container ─────────────────────────────── */
+        .track-container {
+            width: 100%;
+            /* Made the track taller so the car can fit comfortably inside */
+            height: clamp(40px, 8vw, 64px);
+            /* Black plain road */
+            background-color: #111111;
+            border-radius: 32px;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+            /* Clip the car when it goes beyond the edges */
+            overflow: hidden;
+        }
+
+        /* ── The Loading Action (White Center Line) ──────────────── */
+        .progress-bar {
+            position: absolute;
+            top: 50%;
+            left: 2%; /* Small padding from left */
+            /* The loading progress is the center white line */
+            height: 4px;
+            transform: translateY(-50%);
+            width: 0%;
+            background-image: repeating-linear-gradient(
+                to right,
+                #ffffff 0px,
+                #ffffff 15px,
+                transparent 15px,
+                transparent 30px
+            );
+            z-index: 2;
+            animation: fill-bar 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        /* ── The Car ─────────────────────────────────────── */
+        .car-wrapper {
+            position: absolute;
+            /* Center vertically inside the bar */
+            top: 50%;
+            left: 0%;
+            /* Center vertically and align horizontally on the tip */
+            transform: translate(-50%, -50%);
+            /* Fit the car inside the bar */
+            height: 75%;
+            z-index: 3;
+            animation: drive-car 8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            will-change: left;
+            display: flex;
+            align-items: center;
+        }
+
+        .car-img {
+            height: 100%;
+            width: auto;
+            /* Removed scaleX(-1) so the car faces forward naturally */
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        /* ── Animations ───────────────────────────────────── */
+        @keyframes fill-bar {
+            0% { width: 0%; }
+            100% { width: 115%; }
+        }
+
+        @keyframes drive-car {
+            0% { left: 0%; }
+            100% { left: 115%; }
+        }
+
+        /* ── Responsive ───────────────────────────────────── */
+        @media (max-width: 480px) {
+            .scene { width: 94%; }
+        }
+
+        /* ── Reduce-motion a11y ───────────────────────────── */
+        @media (prefers-reduced-motion: reduce) {
+            .progress-bar, .car-wrapper, .loading-label {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="scene" role="main" aria-live="polite" aria-label="Loading screen">
+        <p class="loading-label" aria-label="Loading, please wait">Loading&hellip;</p>
+
+        <div class="track-container" aria-hidden="true">
+            <!-- White progress bar -->
+            <div class="progress-bar"></div>
+            
+            <!-- Car driving on the bar -->
+            <div class="car-wrapper">
+                <img
+                    src="loadcar.png"
+                    alt="Car driving on road"
+                    class="car-img"
+                    draggable="false"
+                    loading="eager"
+                />
+            </div>
+        </div>
+    </main>
+
+</body>
+
+</html>
